@@ -1,147 +1,136 @@
+// GitHub'dagi raw havolangizni shu yerga 
+const githubUrl = 'https://raw.githubusercontent.com/Otash-dasturchi-1/wib/main/data.json';
+
 let allUsers = [];
+let activeCategory = 'all';
+let searchQuery = '';
+let selectedUser = null;
 
-// Ma'lumotlarni yuklab olish (GitHub -> Muvaffaqiyatsiz bo'lsa Lokal)
-async function fetchUsers() {
-    const gridContainer = document.getElementById('cardGrid');
-    
-    // O'ZINGIZNING GITHUB RAW HAVOLANGIZNI SHU YERGA YOZING:
-    const githubUrl = 'https://raw.githubusercontent.com/foydalanuvchi_nomi/repo_nomi/main/data.json';
-    const localUrl = 'data.json';
+const gridEl = document.getElementById('cards-grid');
+const searchInput = document.getElementById('search-input');
+const categoryContainer = document.getElementById('category-container');
 
-    try {
-        let response;
-        try {
-            // 1. Avval GitHub'dan olishga harakat qiladi
-            response = await fetch(githubUrl);
-            if (!response.ok) throw new Error("GitHub'dan olib bo'lmadi");
-            console.log("Ma'lumot GitHub'dan olindi!");
-        } catch (githubError) {
-            console.warn("GitHub ishlamadi, lokal faylga o'tilmoqda...", githubError);
-            // 2. Agar GitHub ishlamasa, lokal fayldan o'qiydi
-            response = await fetch(localUrl);
-            if (!response.ok) throw new Error("Lokal faylni ҳам o'qib bo'lmadi!");
-            console.log("Ma'lumot lokal fayldan olindi!");
-        }
-        
-        allUsers = await response.json();
-        
-        populateJobFilter(allUsers);
-        displayUsers(allUsers);
+const modalOverlay = document.getElementById('modal-overlay');
+const closeModalBtn = document.getElementById('close-modal');
+const sendMessageBtn = document.getElementById('send-message-btn');
+const userMessageInput = document.getElementById('user-message');
 
-    } catch (error) {
-        gridContainer.innerHTML = `<div class="error"><i class="fa-solid fa-triangle-exclamation"></i> Xatolik: ${error.message}<br><small>Iltimos, internet aloqasini yoki fayl nomlarini tekshiring!</small></div>`;
-    }
+// Ma'lumotlarni yuklab olish (GitHub + Local Fallback)
+function loadData() {
+    fetch(githubUrl)
+        .then(res => {
+            if (!res.ok) throw new Error("GitHub yuklanmadi");
+            return res.json();
+        })
+        .then(data => {
+            allUsers = data;
+            initApp();
+        })
+        .catch(err => {
+            console.warn("GitHub ishlamadi, lokal data.json ishlatilmoqda...", err);
+            fetch('data.json')
+                .then(res => res.json())
+                .then(data => {
+                    allUsers = data;
+                    initApp();
+                })
+                .catch(e => console.error("Ma'lumotlarni topib bo'lmadi:", e));
+        });
 }
 
-// Kasblar bo'yicha filter menyusini to'ldirish
-function populateJobFilter(users) {
-    const jobFilterSelect = document.getElementById('jobFilter');
-    const uniqueJobs = [...new Set(users.map(user => user.job).filter(Boolean))];
+function initApp() {
+    generateCategories();
+    renderUsers();
+}
+
+// Kategoriyalarni dinamik hosil qilish
+function generateCategories() {
+    const jobs = [...new Set(allUsers.map(user => user.job))];
     
-    jobFilterSelect.innerHTML = '<option value="all">Barcha kasblar</option>';
-    
-    uniqueJobs.forEach(job => {
-        jobFilterSelect.innerHTML += `<option value="${job}">${job}</option>`;
+    jobs.forEach(job => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.setAttribute('data-category', job);
+        btn.textContent = job;
+        categoryContainer.appendChild(btn);
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            activeCategory = e.target.getAttribute('data-category');
+            renderUsers();
+        });
     });
 }
 
-// Foydalanuvchilarni ekranga chizish
-function displayUsers(users) {
-    const gridContainer = document.getElementById('cardGrid');
-    
-    if (users.length === 0) {
-        gridContainer.innerHTML = `<div class="loading">Hech qanday ma'lumot topilmadi.</div>`;
+// Foydalanuvchilarni ekranga chiqarish
+function renderUsers() {
+    gridEl.innerHTML = '';
+
+    const filtered = allUsers.filter(user => {
+        const matchesCategory = activeCategory === 'all' || user.job === activeCategory;
+        const matchesSearch = user.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                              user.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                              user.job.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+    });
+
+    if (filtered.length === 0) {
+        gridEl.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #64748b;">Hech qanday maʼlumot topilmadi.</p>';
         return;
     }
 
-    gridContainer.innerHTML = "";
-
-    users.forEach(user => {
-        const nameStr = user.full_name || "User";
-        const initials = nameStr.split(' ').map(n => n[0]).join('');
-
-        gridContainer.innerHTML += `
-            <div class="card">
-                <!-- Minimal ko'rinish -->
-                <div class="card-header">
-                    <div class="avatar">${initials}</div>
-                    <div class="user-info">
-                        <h3>${user.full_name || 'Nomaʼlum'}</h3>
-                        <span class="badge">${user.job || 'Mutaxassis'}</span>
-                    </div>
-                </div>
-
-                <!-- Hover qilinganda ochiladigan barcha ma'lumotlar -->
-                <div class="card-details">
-                    <div class="info-item">
-                        <i class="fa-solid fa-id-badge"></i>
-                        <span><strong>ID:</strong> ${user.id}</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fa-solid fa-phone"></i>
-                        <span><strong>Tel:</strong> ${user.phone_number || 'Kiritilmagan'}</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fa-solid fa-envelope"></i>
-                        <span><strong>Email:</strong> ${user.email || 'Kiritilmagan'}</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span><strong>Shahar:</strong> ${user.city || 'Kiritilmagan'}</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fa-solid fa-briefcase"></i>
-                        <span><strong>Staji:</strong> ${user.experience || 'Kiritilmagan'}</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fa-solid fa-user-clock"></i>
-                        <span><strong>Yoshi:</strong> ${user.age || 'Kiritilmagan'} yosh</span>
-                    </div>
-                </div>
-
-                <!-- Xabar yozish tugmasi -->
-                <button class="msg-btn" onclick="sendMessage('${user.full_name}')">
-                    <i class="fa-solid fa-paper-plane"></i> Xabar yozish
-                </button>
-            </div>
+    filtered.forEach(user => {
+        const card = document.createElement('div');
+        card.className = 'user-card';
+        card.innerHTML = `
+            <h3>${user.full_name}</h3>
+            <p><strong>Shahar:</strong> ${user.city}</p>
+            <p><strong>Yosh:</strong> ${user.age} | <strong>Tajriba:</strong> ${user.experience}</p>
+            <span class="job-badge">${user.job}</span>
         `;
+
+        card.addEventListener('click', () => openModal(user));
+        gridEl.appendChild(card);
     });
 }
 
-// Xabar yozish funksiyasi
-function sendMessage(userName) {
-    const message = prompt(`${userName}ga qanday xabar yubormoqchisiz?`);
-    if (message) {
-        alert(`Xabaringiz muvaffaqiyatli yuborildi!\n\nKimga: ${userName}\nXabar: "${message}"`);
+searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderUsers();
+});
+
+function openModal(user) {
+    selectedUser = user;
+    document.getElementById('modal-name').textContent = user.full_name;
+    document.getElementById('modal-job').textContent = `Kasbi: ${user.job}`;
+    document.getElementById('modal-city').textContent = `Shahar: ${user.city}`;
+    document.getElementById('modal-phone').textContent = `Telefon: ${user.phone_number}`;
+    document.getElementById('modal-email').textContent = `Email: ${user.email}`;
+    userMessageInput.value = '';
+    
+    modalOverlay.style.display = 'flex';
+}
+
+function closeModal() {
+    modalOverlay.style.display = 'none';
+}
+
+closeModalBtn.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+});
+
+sendMessageBtn.addEventListener('click', () => {
+    const messageText = userMessageInput.value.trim();
+    if (!messageText) {
+        alert('Iltimos, xabar matnini kiriting!');
+        return;
     }
-}
+    alert(`Xabaringiz ${selectedUser.full_name} ga muvaffaqiyatli yuborildi!`);
+    closeModal();
+});
 
-// Qidirish va Saralash funksiyasi
-function filterUsers() {
-    const searchText = document.getElementById('searchInput').value.toLowerCase();
-    const searchType = document.getElementById('searchType').value;
-    const selectedJob = document.getElementById('jobFilter').value;
-
-    const filtered = allUsers.filter(user => {
-        const matchesJob = (selectedJob === 'all') || (user.job === selectedJob);
-
-        let matchesSearch = true;
-        if (searchText !== '') {
-            if (searchType === 'all') {
-                matchesSearch = Object.values(user).some(value => 
-                    value !== null && value !== undefined && value.toString().toLowerCase().includes(searchText)
-                );
-            } else {
-                const fieldValue = user[searchType] ? user[searchType].toString().toLowerCase() : '';
-                matchesSearch = fieldValue.includes(searchText);
-            }
-        }
-
-        return matchesJob && matchesSearch;
-    });
-
-    displayUsers(filtered);
-}
-
-// Sahifa yuklanganda ishga tushadi
-window.onload = fetchUsers;
+loadData();

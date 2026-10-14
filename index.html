@@ -3,51 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foydalanuvchilar Ro'yxati - REST API</title>
-    <!-- Google Fonts va FontAwesome ikonkalari -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- CSS fayl -->
+    <title>Dinamik Foydalanuvchilar Ro'yxati</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
         <header>
-            <h1>Foydalanuvchilar Ma'lumotlar Bazasi</h1>
-            <p>GitHub va Lokal REST API yordamida yuklangan ma'lumotlar</p>
+            <h1>Dinamik Foydalanuvchilar Paneli</h1>
+            <p>Ma'lumotlar GitHub va lokal bazadan o'qiladi</p>
         </header>
 
-        <!-- Qidirish va Saralash paneli -->
-        <div class="search-box">
-            <select id="searchType">
-                <option value="all">Barcha maydonlar</option>
-                <option value="full_name">F.I.Sh.</option>
-                <option value="phone_number">Telefon</option>
-                <option value="email">Email</option>
-                <option value="job">Kasbi</option>
-                <option value="city">Shahar</option>
-                <option value="experience">Staji</option>
-                <option value="age">Yoshi</option>
-            </select>
+        <!-- Qidiruv va Filtrlar paneli -->
+        <div class="controls">
+            <input type="text" id="search-input" class="search-input" placeholder="Ism, kasb yoki shahar bo'yicha qidirish...">
             
-            <input type="text" id="searchInput" placeholder="Qidirish uchun yozing..." onkeyup="filterUsers()">
-
-            <!-- Kasblar bo'yicha saralash (Filter) -->
-            <select id="jobFilter" onchange="filterUsers()">
-                <option value="all">Barcha kasblar</option>
-            </select>
+            <div class="category-filters" id="category-container">
+                <button class="filter-btn active" data-category="all">Hammasi</button>
+            </div>
         </div>
 
-        <!-- Ma'lumotlar chiqadigan joy -->
-        <div id="cardGrid" class="grid-container">
-            <div class="loading">Ma'lumotlar yuklanmoqda...</div>
+        <!-- Kartochkalar chiqadigan joy -->
+        <div class="cards-grid" id="cards-grid"></div>
+    </div>
+
+    <!-- Modal Oyna -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-card">
+            <button id="close-modal" class="close-btn">&times;</button>
+            <div class="modal-info">
+                <h2 id="modal-name">F.I.O</h2>
+                <p id="modal-job">Kasbi: -</p>
+                <p id="modal-city">Shahar: -</p>
+                <p id="modal-phone">Telefon: -</p>
+                <p id="modal-email">Email: -</p>
+            </div>
+            
+            <div class="message-section">
+                <label for="user-message">Shaxsiy xabar yuborish:</label>
+                <textarea id="user-message" placeholder="Xabaringizni shu yerga yozing..."></textarea>
+                <button id="send-message-btn" class="send-btn">Xabarni yuborish</button>
+            </div>
         </div>
     </div>
 
-    <!-- JS fayl -->
     <script src="script.js"></script>
-
 </body>
 </html>
