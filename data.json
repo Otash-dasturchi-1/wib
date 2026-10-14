@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "full_name": "Amirov Otabek",
+        "phone_number": "+998908760724",
+        "email": "otabekamirov0724@gmail.com",
+        "job": "Frontend Developer",
+        "city": "Toshkent",
+        "experience": "3 yil",
+        "age": 20
+    },
+    {
+        "id": 2,
+        "full_name": "Axmedov Samandar",
+        "phone_number": "+998200271524",
+        "email": "samandar777@gmail.com",
+        "job": "Backend Developer",
+        "city": "Samarqand",
+        "experience": "2 yil",
+        "age": 22
+    },
+    {
+        "id": 3,
+        "full_name": "Boltaboyev Dilshod",
+        "phone_number": "+998205702415",
+        "email": "bdilshod123@gmail.com",
+        "job": "UI/UX Designer",
+        "city": "Buxoro",
+        "experience": "4 yil",
+        "age": 26
+    },
+    {
+        "id": 4,
+        "full_name": "Karimova Zuxra",
+        "phone_number": "+998935544332",
+        "email": "zuxra.k@gmail.com",
+        "job": "Project Manager",
+        "city": "Toshkent",
+        "experience": "5 yil",
+        "age": 29
+    },
+    {
+        "id": 5,
+        "full_name": "Tursunov Jasur",
+        "phone_number": "+998971122334",
+        "email": "jasur.t@mail.uz",
+        "job": "Full Stack Developer",
+        "city": "Farg'ona",
+        "experience": "3.5 yil",
+        "age": 27
+    },
+    {
+        "id": 6,
+        "full_name": "Rahimova Malika",
+        "phone_number": "+998913332211",
+        "email": "malika.rahimova@gmail.com",
+        "job": "QA Engineer",
+        "city": "Namangan",
+        "experience": "2 yil",
+        "age": 23
+    },
+    {
+        "id": 7,
+        "full_name": "Ismoilov Bekzod",
+        "phone_number": "+998994445566",
+        "email": "bekzod.i@yahoo.com",
+        "job": "DevOps Engineer",
+        "city": "Andijon",
+        "experience": "4 yil",
+        "age": 28
+    },
+    {
+        "id": 8,
+        "full_name": "Ergasheva Dilfuza",
+        "phone_number": "+998901234567",
+        "email": "dilfuza.e@gmail.com",
+        "job": "Data Analyst",
+        "city": "Navoiy",
+        "experience": "1.5 yil",
+        "age": 25
+    },
+    {
+        "id": 9,
+        "full_name": "Qodirov Sardor",
+        "phone_number": "+998939876543",
+        "email": "sardor.q@mail.ru",
+        "job": "Mobile Developer",
+        "city": "Toshkent",
+        "experience": "3 yil",
+        "age": 26
+    },
+    {
+        "id": 10,
+        "full_name": "Saidova Sevara",
+        "phone_number": "+998957778899",
+        "email": "sevara.s@gmail.com",
+        "job": "HR Manager",
+        "city": "Samarqand",
+        "experience": "6 yil",
+        "age": 31
+    }
+]

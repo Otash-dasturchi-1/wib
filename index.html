@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foydalanuvchilar Ro'yxati - REST API</title>
+    <!-- Google Fonts va FontAwesome ikonkalari -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS fayl -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Foydalanuvchilar Ma'lumotlar Bazasi</h1>
+            <p>GitHub va Lokal REST API yordamida yuklangan ma'lumotlar</p>
+        </header>
+
+        <!-- Qidirish va Saralash paneli -->
+        <div class="search-box">
+            <select id="searchType">
+                <option value="all">Barcha maydonlar</option>
+                <option value="full_name">F.I.Sh.</option>
+                <option value="phone_number">Telefon</option>
+                <option value="email">Email</option>
+                <option value="job">Kasbi</option>
+                <option value="city">Shahar</option>
+                <option value="experience">Staji</option>
+                <option value="age">Yoshi</option>
+            </select>
+            
+            <input type="text" id="searchInput" placeholder="Qidirish uchun yozing..." onkeyup="filterUsers()">
+
+            <!-- Kasblar bo'yicha saralash (Filter) -->
+            <select id="jobFilter" onchange="filterUsers()">
+                <option value="all">Barcha kasblar</option>
+            </select>
+        </div>
+
+        <!-- Ma'lumotlar chiqadigan joy -->
+        <div id="cardGrid" class="grid-container">
+            <div class="loading">Ma'lumotlar yuklanmoqda...</div>
+        </div>
+    </div>
+
+    <!-- JS fayl -->
+    <script src="script.js"></script>
+
+</body>
+</html>
